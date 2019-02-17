@@ -1,5 +1,6 @@
 package org.koushik.javabrains.messenger.resources;
 
+import java.net.UnknownHostException;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -11,6 +12,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.core.MediaType;
 
+import org.elasticsearch.action.DocWriteResponse.Result;
+import org.koushik.javabrains.messenger.ElasticsearchClient;
 import org.koushik.javabrains.messenger.model.ErrorRequest;
 import org.koushik.javabrains.messenger.model.Message;
 import org.koushik.javabrains.messenger.service.MessageService;
@@ -28,17 +31,21 @@ public class MessageResource {
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public String addMessage(ErrorRequest err) {
+	public Result addMessage(ErrorRequest err) throws UnknownHostException {
 		// TODO CALL THE METHOD WHICH WILL SAVE DATA TO ELASTICSEARCH
-		return err.getErrorMessage();
+		ElasticsearchClient obj = new ElasticsearchClient();
+		return obj.saveToES(err);
+		
 
 	}
-
+/*
 	public void callingElasticSearch() {
 		Client client = new PreBuiltTransportClient(
 				Settings.builder().put("client.transport.sniff", true).put("cluster.name", "elasticsearch").build())
 						.addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName("127.0.0.1"), 9300));
-	}
+	}*/
+
+	
 
 	/*
 	 * @GET
