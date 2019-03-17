@@ -18,6 +18,8 @@ import org.koushik.javabrains.messenger.model.ErrorRequest;
 import org.koushik.javabrains.messenger.model.Message;
 import org.koushik.javabrains.messenger.service.MessageService;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+
 @Path("/messages")
 public class MessageResource {
 	MessageService messageService = new MessageService();
@@ -31,9 +33,10 @@ public class MessageResource {
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Result addMessage(ErrorRequest err) throws UnknownHostException {
+	public Result addMessage(ErrorRequest err) throws UnknownHostException, JsonProcessingException {
 		// TODO CALL THE METHOD WHICH WILL SAVE DATA TO ELASTICSEARCH
 		ElasticsearchClient obj = new ElasticsearchClient();
+		System.out.println(err.toString());
 		return obj.saveToES(err);
 		
 

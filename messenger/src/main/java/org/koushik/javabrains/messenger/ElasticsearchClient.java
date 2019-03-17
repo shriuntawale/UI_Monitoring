@@ -15,6 +15,9 @@ import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.transport.client.PreBuiltTransportClient;
 import org.koushik.javabrains.messenger.model.ErrorRequest;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.*;
+
 public class ElasticsearchClient {
 	public static TransportClient getClient() throws UnknownHostException {
 		TransportClient client = new PreBuiltTransportClient(Settings.EMPTY)
@@ -23,12 +26,19 @@ public class ElasticsearchClient {
 		return client;
 	}
 
-	public Result saveToES(ErrorRequest errorObject) throws UnknownHostException {
+	public Result saveToES(ErrorRequest errorObject) throws UnknownHostException, JsonProcessingException {
 		TransportClient clientObj = getClient();
-		Map<String, Object> json = new HashMap<String, Object>();
+		ObjectMapper mapper = new ObjectMapper(); // create once, reuse
+
+		/*Map<String, Object> json = new HashMap<String, Object>();
 		json.put("lineNumber",errorObject.getLineNumber());
 		json.put("errorType",errorObject.getErrorType());
-		json.put("errorMessage",errorObject.getErrorMessage());
+		json.put("errorMessage",errorObject.getErrorMsg());*/
+	
+		
+		// generate json
+		byte[] json = mapper.writeValueAsBytes(errorObject);
+		System.out.println("saving in es");
 		IndexResponse response = clientObj.prepareIndex("uierror", "_doc").setSource(json, XContentType.JSON).get();
 		Result result = response.getResult();
 		return result;
